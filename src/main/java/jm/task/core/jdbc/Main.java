@@ -23,6 +23,6 @@ public class Main {
         }
         userService.cleanUsersTable();
         userService.dropUsersTable();
-        Util.finishConnection();
+        Util.finishSession();
     }
 }
