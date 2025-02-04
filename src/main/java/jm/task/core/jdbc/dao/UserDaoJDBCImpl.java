@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
-    private Connection conn;
+    private final Connection conn;
 
     public UserDaoJDBCImpl() { this.conn = Util.getConnection(); }
 
@@ -39,9 +39,8 @@ public class UserDaoJDBCImpl implements UserDao {
             ps.setString(2, lastName);
             ps.setByte(3, age);
             ResultSet rs = ps.executeQuery();
-            if(rs.next()){
-                System.out.println("User с именем – "+rs.getString(1)+" добавлен в базу данных");
-            }
+            if(rs.next()) System.out.println("User с именем – "+rs.getString(1)+" добавлен в базу данных");
+            rs.close();
         } catch(SQLException e){
             e.printStackTrace();
         }
