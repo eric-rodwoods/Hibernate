@@ -8,6 +8,7 @@ import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
     private final Session session;
+
     public UserDaoHibernateImpl() { this.session = Util.getSession();  }
 
     @Override
@@ -19,7 +20,6 @@ public class UserDaoHibernateImpl implements UserDao {
         } catch(Exception e){
             e.printStackTrace();
         }
-
     }
 
     @Override
