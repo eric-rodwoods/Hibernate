@@ -67,7 +67,7 @@ public class Util {
     }
     private static Session buildSession() {
         try{
-            if (sessionFactory == null) {
+            if (sessionFactory == null || sessionFactory.isClosed()) {
                 sessionFactory = buildSessionFactory();
             }
             assert sessionFactory != null;
@@ -78,7 +78,7 @@ public class Util {
         }
     }
     public static Session getSession(){
-        if(session == null){
+        if(session == null || !session.isOpen()){
             session = buildSession();
         }
         return session;
