@@ -23,9 +23,12 @@ public class Util {
         }
     }
     public static Connection getConnection() {
-        if(connection == null){
-            connection = buildConnection();
+        try{
+            if(connection == null || connection.isClosed()) connection = buildConnection();
+        } catch(SQLException e){
+            System.out.println("Error while creating Connection: "+e.getMessage());
         }
+
         return connection;
     }
     public static void finishConnection() {
