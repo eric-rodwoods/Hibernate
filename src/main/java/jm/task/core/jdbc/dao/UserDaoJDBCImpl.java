@@ -10,56 +10,54 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
-    private Connection conn;
 
-    public UserDaoJDBCImpl() { this.conn = Util.getConnection(); }
+    public UserDaoJDBCImpl() {}
 
     public void createUsersTable() {
-        try{
-            PreparedStatement ps = conn.prepareStatement(Queries.CREATE_TABLE.QUERY);
+        try (Connection connection = Util.getConnection();
+             PreparedStatement ps = connection.prepareStatement(Queries.CREATE_TABLE.QUERY)){
             ps.executeUpdate();
-        } catch(SQLException e){
-            e.printStackTrace();
+        } catch(SQLException | NullPointerException e){
+            System.out.println("Error while executing statement: "+e.getMessage());
         }
     }
 
     public void dropUsersTable() {
-        try{
-            PreparedStatement ps = conn.prepareStatement(Queries.DROP_TABLE.QUERY);
+        try (Connection connection = Util.getConnection();
+             PreparedStatement ps = connection.prepareStatement(Queries.DROP_TABLE.QUERY)){
             ps.executeUpdate();
-        } catch(SQLException e){
-            e.printStackTrace();
+        } catch(SQLException | NullPointerException e){
+            System.out.println("Error while executing statement: "+e.getMessage());
         }
     }
 
     public void saveUser(String name, String lastName, byte age) {
-        try{
-            PreparedStatement ps = conn.prepareStatement(Queries.SAVE.QUERY);
+        try (Connection connection = Util.getConnection();
+             PreparedStatement ps = connection.prepareStatement(Queries.SAVE.QUERY)) {
             ps.setString(1, name);
             ps.setString(2, lastName);
             ps.setByte(3, age);
             ResultSet rs = ps.executeQuery();
-            if(rs.next()){
-                System.out.println("User с именем – "+rs.getString(1)+" добавлен в базу данных");
-            }
-        } catch(SQLException e){
-            e.printStackTrace();
+            if(rs.next()) System.out.println("User с именем – "+rs.getString(1)+" добавлен в базу данных");
+            rs.close();
+        } catch(SQLException | NullPointerException e){
+            System.out.println("Error while executing statement: "+e.getMessage());
         }
     }
 
     public void removeUserById(long id) {
-        try{
-            PreparedStatement ps = conn.prepareStatement(Queries.REMOVE.QUERY);
+        try (Connection connection = Util.getConnection();
+             PreparedStatement ps = connection.prepareStatement(Queries.REMOVE.QUERY)){
             ps.setLong(1, id);
             ps.executeUpdate();
-        } catch(SQLException e){
-            e.printStackTrace();
+        } catch(SQLException | NullPointerException e){
+            System.out.println("Error while executing statement: "+e.getMessage());
         }
     }
 
     public List<User> getAllUsers() {
-        try{
-            PreparedStatement ps = conn.prepareStatement(Queries.GET_ALL.QUERY);
+        try (Connection connection = Util.getConnection();
+             PreparedStatement ps = connection.prepareStatement(Queries.GET_ALL.QUERY)){
             ResultSet rs = ps.executeQuery();
             List<User> users = new ArrayList<>();
             while(rs.next()){
@@ -71,20 +69,19 @@ public class UserDaoJDBCImpl implements UserDao {
                 users.add(user);
             }
             rs.close();
-
             return users;
-        } catch(SQLException e){
-            e.printStackTrace();
+        } catch(SQLException | NullPointerException e){
+            System.out.println("Error while executing statement: "+e.getMessage());
         }
         return null;
     }
 
     public void cleanUsersTable() {
-        try{
-            PreparedStatement ps = conn.prepareStatement(Queries.CLEAN_TABLE.QUERY);
+        try (Connection connection = Util.getConnection();
+             PreparedStatement ps = connection.prepareStatement(Queries.CLEAN_TABLE.QUERY)){
             ps.executeUpdate();
-        } catch(SQLException e){
-            e.printStackTrace();
+        } catch(SQLException | NullPointerException e){
+            System.out.println("Error while executing statement: "+e.getMessage());
         }
     }
 }
