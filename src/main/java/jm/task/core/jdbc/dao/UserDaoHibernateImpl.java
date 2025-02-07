@@ -5,7 +5,6 @@ import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,66 +14,66 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() {
-        try(Session session = Util.getSession()){
-            Transaction transaction = session.beginTransaction();
+        Transaction transaction = null;
+        try (Session session = Util.getSession()) {
+            transaction = session.beginTransaction();
             session.createNativeQuery(Queries.CREATE_TABLE.QUERY, User.class).executeUpdate();
-            try{
-                transaction.commit();
-            } catch(IllegalStateException | RollbackException e) {
-                transaction.rollback();
-                System.out.println("Error while commiting transaction: "+e.getMessage());
-            }
-        } catch(NullPointerException ex) {
-            System.out.println("Error while getting Session: "+ex.getMessage());
+            transaction.commit();
+        } catch (NullPointerException ex) {
+            System.out.println("Error while getting Session: " + ex.getMessage());
+        } catch (IllegalStateException | RollbackException e) {
+            assert transaction != null;
+            transaction.rollback();
+            System.out.println("Error while committing transaction: " + e.getMessage());
         }
     }
 
     @Override
     public void dropUsersTable() {
-        try(Session session = Util.getSession()){
-            Transaction transaction = session.beginTransaction();
+        Transaction transaction = null;
+        try(Session session = Util.getSession()) {
+            transaction = session.beginTransaction();
             session.createNativeQuery(Queries.DROP_TABLE.QUERY, User.class).executeUpdate();
-            try{
-                transaction.commit();
-                session.clear();
-            } catch(IllegalStateException | RollbackException e) {
-                transaction.rollback();
-                System.out.println("Error while commiting transaction: "+e.getMessage());
-            }
+            transaction.commit();
+            session.clear();
         } catch(NullPointerException ex) {
             System.out.println("Error while getting Session: "+ex.getMessage());
+        } catch (IllegalStateException | RollbackException e) {
+            assert transaction != null;
+            transaction.rollback();
+            System.out.println("Error while committing transaction: " + e.getMessage());
         }
     }
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        try(Session session = Util.getSession()){
-            Transaction transaction = session.beginTransaction();
+        Transaction transaction = null;
+        try(Session session = Util.getSession()) {
+            transaction = session.beginTransaction();
             session.persist(new User(name, lastName, age));
-            try{
-                transaction.commit();
-            } catch(IllegalStateException | RollbackException e) {
-                transaction.rollback();
-                System.out.println("Error while commiting transaction: "+e.getMessage());
-            }
+            transaction.commit();
         } catch(NullPointerException ex) {
             System.out.println("Error while getting Session: "+ex.getMessage());
+        } catch (IllegalStateException | RollbackException e) {
+            assert transaction != null;
+            transaction.rollback();
+            System.out.println("Error while committing transaction: " + e.getMessage());
         }
     }
 
     @Override
     public void removeUserById(long id) {
-        try(Session session = Util.getSession()){
-            Transaction transaction = session.beginTransaction();
+        Transaction transaction = null;
+        try(Session session = Util.getSession()) {
+            transaction = session.beginTransaction();
             session.remove(session.get(User.class, id));
-            try{
-                transaction.commit();
-            } catch(IllegalStateException | RollbackException e) {
-                transaction.rollback();
-                System.out.println("Error while commiting transaction: "+e.getMessage());
-            }
+            transaction.commit();
         } catch(NullPointerException ex) {
             System.out.println("Error while getting Session: "+ex.getMessage());
+        } catch (IllegalStateException | RollbackException e) {
+            assert transaction != null;
+            transaction.rollback();
+            System.out.println("Error while committing transaction: " + e.getMessage());
         }
     }
 
@@ -90,17 +89,17 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void cleanUsersTable() {
-        try(Session session = Util.getSession()){
-            Transaction transaction = session.beginTransaction();
+        Transaction transaction = null;
+        try(Session session = Util.getSession()) {
+            transaction = session.beginTransaction();
             session.createMutationQuery("DELETE FROM User u").executeUpdate();
-            try{
-                transaction.commit();
-            } catch(IllegalStateException | RollbackException e) {
-                transaction.rollback();
-                System.out.println("Error while commiting transaction: "+e.getMessage());
-            }
+            transaction.commit();
         } catch(NullPointerException ex) {
             System.out.println("Error while getting Session: "+ex.getMessage());
+        } catch (IllegalStateException | RollbackException e) {
+            assert transaction != null;
+            transaction.rollback();
+            System.out.println("Error while committing transaction: " + e.getMessage());
         }
     }
 }
